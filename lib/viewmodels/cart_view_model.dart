@@ -1,40 +1,64 @@
 import 'package:flutter/foundation.dart';
 import '../repository/local_storage.dart';
 
+// ViewModel qui gère l'état du panier
+// Il utilise ChangeNotifier pour notifier l'UI des changements
 class CartViewModel extends ChangeNotifier {
+  // Instance du stockage local (ex: SharedPreferences, base locale…)
   final LocalStorage _store;
+
+  // Map contenant les produits du panier
+  // clé = id du produit, valeur = quantité
   Map<int, int> _cart = {};
 
+  // Constructeur avec injection optionnelle du stockage (utile pour les tests)
   CartViewModel({LocalStorage? store}) : _store = store ?? LocalStorage();
 
+  // Getter public en lecture seule (empêche modification directe depuis l'extérieur)
   Map<int, int> get cart => Map.unmodifiable(_cart);
+
+  // Retourne la quantité d’un produit spécifique
   int qty(int id) => _cart[id] ?? 0;
 
+  // Charge le panier depuis le stockage local
   Future<void> load() async {
-    _cart = await _store.getCart();
-    notifyListeners();
+    _cart = await _store.getCart(); // récupération des données
+    notifyListeners(); // met à jour l'UI
   }
 
+  // Ajoute un produit au panier (ou incrémente sa quantité)
   Future<void> add(int id) async {
-    final q = (_cart[id] ?? 0) + 1;
+    final q = (_cart[id] ?? 0) + 1; // quantité actuelle + 1
     _cart[id] = q;
-    await _store.setCartQty(id, q);
-    notifyListeners();
+
+    // Sauvegarde en base (commentée ici)
+    // await _store.setCartQty(id, q);
+
+    notifyListeners(); // notifie l'interface
   }
 
+  // Retire une unité d’un produit
   Future<void> removeOne(int id) async {
     final q = (_cart[id] ?? 0) - 1;
-    await _store.setCartQty(id, q);
+
+    // Sauvegarde en base (commentée ici)
+    // await _store.setCartQty(id, q);
+
+    // Si quantité <= 0 → on supprime le produit du panier
     if (q <= 0)
       _cart.remove(id);
     else
       _cart[id] = q;
-    notifyListeners();
+
+    notifyListeners(); // met à jour l'UI
   }
 
+  // Vide complètement le panier
   Future<void> clear() async {
-    await _store.clearCart();
-    _cart.clear();
-    notifyListeners();
+    // Suppression en base (commentée ici)
+    // await _store.clearCart();
+
+    _cart.clear(); // vide la Map
+    notifyListeners(); // met à jour l'UI
   }
 }

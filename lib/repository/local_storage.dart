@@ -1,76 +1,75 @@
-import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../models/article.dart';
+// Créez un modèle Order ou utilisez simplement une Map pour l'historique
 
 class LocalStorage {
-  static const dbName = 'bloc2_store.db';
-  static const favoritesTable = 'favorites';
-  static const cartTable = 'cart';
-
-  Database? _db;
-
-  Future<Database> _getDb() async {
-    if (_db != null) return _db!;
-    _db = await openDatabase(
-      join(await getDatabasesPath(), dbName),
-      version: 1,
-      onCreate: (db, v) async {
-        await db.execute(
-          'CREATE TABLE $favoritesTable (id INTEGER PRIMARY KEY)',
-        );
-        await db.execute(
-          'CREATE TABLE $cartTable (id INTEGER PRIMARY KEY, qty INTEGER NOT NULL)',
-        );
-      },
-    );
-    return _db!;
+  // --- FAVORIS ---
+  static Future<void> saveFavorites(List<Article> favorites) async {
+    final prefs = await SharedPreferences.getInstance();
+    final String encoded =
+        json.encode(favorites.map((a) => a.toMap()).toList());
+    await prefs.setString('favorites', encoded);
   }
 
-  // Favorites
-  Future<List<int>> getFavorites() async {
-    final db = await _getDb();
-    final rows = await db.query(favoritesTable);
-    return rows.map((r) => r['id'] as int).toList();
+  static Future<List> loadFavorites() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? data = prefs.getString('favorites');
+    if (data == null) return [];
+    final List<dynamic> decoded = json.decode(data);
+    return decoded.map((item) => Article.fromJson(item)).toList();
   }
 
-  Future<void> addFavorite(int id) async {
-    final db = await _getDb();
-    await db.insert(
-        favoritesTable,
-        {
-          'id': id,
-        },
-        conflictAlgorithm: ConflictAlgorithm.ignore);
+  // --- PANIER ---
+  static Future<void> saveCart(List<Article> cart) async {
+    final prefs = await SharedPreferences.getInstance();
+    final String encoded = json.encode(cart.map((a) => a.toMap()).toList());
+    await prefs.setString('cart', encoded);
   }
 
-  Future<void> removeFavorite(int id) async {
-    final db = await _getDb();
-    await db.delete(favoritesTable, where: 'id=?', whereArgs: [id]);
+  static Future<List> loadCart() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? data = prefs.getString('cart');
+    if (data == null) return [];
+    final List<dynamic> decoded = json.decode(data);
+    return decoded.map((item) => Article.fromJson(item)).toList();
   }
 
-  // Cart
-  Future<Map<int, int>> getCart() async {
-    final db = await _getDb();
-    final rows = await db.query(cartTable);
-    return {for (var r in rows) r['id'] as int: r['qty'] as int};
+  // --- HISTORIQUE D'ACHAT ---
+  static Future<void> saveHistory(List<Map<String, dynamic>> history) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('history', json.encode(history));
   }
 
-  Future<void> setCartQty(int id, int qty) async {
-    final db = await _getDb();
-    if (qty <= 0) {
-      await db.delete(cartTable, where: 'id=?', whereArgs: [id]);
-    } else {
-      await db.insert(
-          cartTable,
-          {
-            'id': id,
-            'qty': qty,
-          },
-          conflictAlgorithm: ConflictAlgorithm.replace);
-    }
+  static Future<List<Map<String, dynamic>>> loadHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? data = prefs.getString('history');
+    if (data == null) return [];
+    return List<Map<String, dynamic>>.from(json.decode(data));
   }
 
-  Future<void> clearCart() async {
-    final db = await _getDb();
-    await db.delete(cartTable);
+  // --- ÉCRAN D'ACCUEIL ---
+  static Future<void> setHideWelcomeScreen(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('hide_welcome', value);
   }
+
+  static Future<bool> shouldHideWelcomeScreen() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('hide_welcome') ?? false;
+  }
+
+  Future<void> addFavorite(int id) async {}
+
+  //Future getFavorites() async {}
+
+  Future<void> removeFavorite(int id) async {}
+
+  //Future<Map<int, int>> getCart() async {}
 }
+
+/*
+extension on Article {
+  toMap() {}
+}
+*/

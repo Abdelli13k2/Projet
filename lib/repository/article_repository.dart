@@ -9,12 +9,12 @@ class ArticleRepository {
     final res = await http.get(Uri.parse('$base/products'));
     if (res.statusCode != 200) throw Exception('API error ${res.statusCode}');
     final List data = jsonDecode(res.body);
-    return data.map((e) => Article.fromMap(e)).toList();
+    return data.map((e) => Article.fromJson(e)).toList();
   }
 
   Future<Article> fetchOne(int id) async {
     final res = await http.get(Uri.parse('$base/products/$id'));
     if (res.statusCode != 200) throw Exception('API error ${res.statusCode}');
-    return Article.fromMap(jsonDecode(res.body));
+    return Article.fromJson(jsonDecode(res.body));
   }
 }

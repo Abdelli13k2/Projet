@@ -15,7 +15,7 @@ class Article {
     required this.image,
   });
 
-  factory Article.fromMap(Map<String, dynamic> m) {
+  factory Article.fromJson(Map<String, dynamic> m) {
     return Article(
       id: m['id'] as int,
       title: m['title'] as String,
@@ -29,4 +29,19 @@ class Article {
           : '',
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': this.id,
+      'title': this.title,
+      'description': this.description,
+      'price': this.price,
+      'category': this.category,
+      'image': this.image
+    };
+  }
+
+  //static fromJson(item) {
+
+  // }
 }
