@@ -5,14 +5,14 @@ import '../repository/local_storage.dart';
 // Il utilise ChangeNotifier pour notifier l'UI des changements
 class CartViewModel extends ChangeNotifier {
   // Instance du stockage local (ex: SharedPreferences, base locale…)
-  final LocalStorage _store;
+  //final LocalStorage _store;
 
   // Map contenant les produits du panier
   // clé = id du produit, valeur = quantité
   Map<int, int> _cart = {};
 
   // Constructeur avec injection optionnelle du stockage (utile pour les tests)
-  CartViewModel({LocalStorage? store}) : _store = store ?? LocalStorage();
+  //CartViewModel({LocalStorage? store}) : _store = store ?? LocalStorage();
 
   // Getter public en lecture seule (empêche modification directe depuis l'extérieur)
   Map<int, int> get cart => Map.unmodifiable(_cart);
@@ -22,7 +22,7 @@ class CartViewModel extends ChangeNotifier {
 
   // Charge le panier depuis le stockage local
   Future<void> load() async {
-    _cart = await _store.getCart(); // récupération des données
+    _cart = await LocalStorage.loadCart() ?? {}; // récupération des données
     notifyListeners(); // met à jour l'UI
   }
 

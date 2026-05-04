@@ -23,16 +23,16 @@ class LocalStorage {
   // --- PANIER ---
   static Future<void> saveCart(List<Article> cart) async {
     final prefs = await SharedPreferences.getInstance();
-    final String encoded = json.encode(cart.map((a) => a.toMap()).toList());
+    final String encoded = json.encode(cart.map((a) => a.toMap()));
     await prefs.setString('cart', encoded);
   }
 
-  static Future<List> loadCart() async {
+  static Future<Map<int, int>?> loadCart() async {
     final prefs = await SharedPreferences.getInstance();
     final String? data = prefs.getString('cart');
-    if (data == null) return [];
-    final List<dynamic> decoded = json.decode(data);
-    return decoded.map((item) => Article.fromJson(item)).toList();
+    if (data == null) return null;
+    final Map<int, int> decoded = json.decode(data);
+    return decoded;
   }
 
   // --- HISTORIQUE D'ACHAT ---
