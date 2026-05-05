@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:td3/models/task.dart';
-import 'package:td3/repository/task_repository.dart';
+import '../lib/models/task.dart';
+import '../lib/repository/task_repository.dart';
 import 'package:flutter/material.dart';
 
 /// Tests d'intégration pour TaskRepository avec base de données en mémoire
@@ -161,7 +161,7 @@ void main() {
     test('getMaxId returns highest id', () async {
       // Arrange - IDs sont maintenant auto-générés par SQLite AUTOINCREMENT
       final task1 = Task(
-        id: 0,  // ID sera généré automatiquement
+        id: 0, // ID sera généré automatiquement
         title: 'Task 1',
         description: 'Desc',
         tags: ['tag'],
@@ -170,7 +170,7 @@ void main() {
         color: Colors.blue,
       );
       final task2 = Task(
-        id: 0,  // ID sera généré automatiquement
+        id: 0, // ID sera généré automatiquement
         title: 'Task 2',
         description: 'Desc',
         tags: ['tag'],
@@ -219,11 +219,12 @@ void main() {
       expect(count, 1);
     });
 
-    test('create with auto-generated ID does not cause UNIQUE constraint error', () async {
+    test('create with auto-generated ID does not cause UNIQUE constraint error',
+        () async {
       // Ce test reproduit le bug Windows : insertion multiple avec même ID
       // Arrange
       final task1 = Task(
-        id: 0,  // Même ID
+        id: 0, // Même ID
         title: 'Task 1',
         description: 'Desc 1',
         tags: ['tag1'],
@@ -232,7 +233,7 @@ void main() {
         color: Colors.blue,
       );
       final task2 = Task(
-        id: 0,  // Même ID - devrait causer une erreur avec l'ancien code
+        id: 0, // Même ID - devrait causer une erreur avec l'ancien code
         title: 'Task 2',
         description: 'Desc 2',
         tags: ['tag2'],

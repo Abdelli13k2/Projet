@@ -87,3 +87,64 @@ class CartScreen extends StatelessWidget {
     );
   }
 }
+
+class Ecran1 extends StatelessWidget {
+  const Ecran1({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final viewModel = context.watch<CartViewModel>();
+    final tasks = viewModel.tasks;
+
+    return ListView.builder(
+      itemCount: tasks.length,
+      itemBuilder: (context, index) {
+        final task = tasks[index];
+
+        return Card(
+          child: ListTile(
+            leading: CircleAvatar(
+              child: Text('$index'),
+            ),
+            title: Text(task.title),
+            subtitle: Text(task.tag),
+            trailing: IconButton(
+              icon: const Icon(Icons.edit),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const EditScreen(),
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class EditScreen extends StatelessWidget {
+  const EditScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Modifier la tâche'),
+      ),
+      body: Column(
+        children: const [
+          Text('Titre'),
+          Text('Description'),
+          ElevatedButton(
+            onPressed: null,
+            child: Text('Enregistrer'),
+          ),
+        ],
+      ),
+    );
+  }
+}

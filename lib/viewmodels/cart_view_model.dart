@@ -11,6 +11,27 @@ class CartViewModel extends ChangeNotifier {
   // clé = id du produit, valeur = quantité
   Map<int, int> _cart = {};
 
+  // ------------------ AJOUT POUR LES TESTS ------------------
+
+  List<Task> _tasks = [];
+
+  List<Task> get tasks => List.unmodifiable(_tasks);
+
+  Future<void> generateTasks() async {
+    _tasks = List.generate(
+      5,
+      (index) => Task(
+        title: 'title $index',
+        description: 'description $index',
+        tag: 'tag $index',
+      ),
+    );
+
+    notifyListeners();
+  }
+
+  // ------------------ FIN AJOUT ------------------
+
   // Constructeur avec injection optionnelle du stockage (utile pour les tests)
   //CartViewModel({LocalStorage? store}) : _store = store ?? LocalStorage();
 
@@ -61,4 +82,18 @@ class CartViewModel extends ChangeNotifier {
     _cart.clear(); // vide la Map
     notifyListeners(); // met à jour l'UI
   }
+}
+
+// ------------------ MODÈLE TASK (EN DEHORS DE LA CLASSE) ------------------
+
+class Task {
+  final String title;
+  final String description;
+  final String tag;
+
+  Task({
+    required this.title,
+    required this.description,
+    required this.tag,
+  });
 }
