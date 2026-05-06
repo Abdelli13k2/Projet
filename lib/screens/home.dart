@@ -6,6 +6,7 @@ import '../viewmodels/cart_view_model.dart';
 import 'article_list.dart';
 import 'favorites.dart';
 import 'cart.dart';
+import 'profil.dart'; 
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -15,7 +16,13 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int _idx = 0;
-  final _pages = const [ArticleList(), FavoritesScreen(), CartScreen()];
+
+  final _pages = const [
+    ArticleList(),
+    FavoritesScreen(),
+    CartScreen(),
+    ProfileScreen(),
+  ];
 
   @override
   void initState() {
@@ -35,13 +42,17 @@ class _HomeState extends State<Home> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _idx,
         onTap: (i) => setState(() => _idx = i),
+
+        backgroundColor: Colors.white,
+        selectedItemColor: Colors.deepPurple,
+        unselectedItemColor: Colors.grey,
+        type: BottomNavigationBarType.fixed,
+
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.store), label: 'Articles'),
           BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Favoris'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
-            label: 'Panier',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: 'Panier'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profil'),
         ],
       ),
     );
